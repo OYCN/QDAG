@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>grid/grid100_w4_28o.png</file>
+    </qresource>
+</RCC>
