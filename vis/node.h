@@ -16,13 +16,15 @@ class Node : public QGraphicsItem {
  public:
     void addEdge(Edge* edge);
     void removeEdge(Edge* edge);
+    void setMetas(NodeMeta& metas);
+    NodeMeta getMetas();
+    void updateRect();
 
  public:
     DEF_VAL_ALL(QColor, BorderColor);
     DEF_VAL_ALL(QColor, BackgroundColor);
     DEF_VAL_ALL(qreal, MinWidth);
     DEF_VAL_ALL(qreal, MinHeight);
-    DEF_VAL_ALL_REF_CONST(QVector<NodeMeta>, Metas);
 
  public:
     QRectF boundingRect() const override;
@@ -31,5 +33,10 @@ class Node : public QGraphicsItem {
 
  private:
     QVector<Edge*> mEdges;
+    NodeMeta mMetas;
+    qreal mRectX;
+    qreal mRectY;
+    qreal mRectW;
+    qreal mRectH;
 };
 #endif  // NODE_H

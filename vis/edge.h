@@ -18,7 +18,7 @@ class Edge : public QGraphicsItem {
     DEF_VAL_ALL(Node*, NodeSrc);
     DEF_VAL_ALL(Node*, NodeDst);
     DEF_VAL_ALL(QColor, Color);
-    DEF_VAL_ALL_REF_CONST(QVector<EdgeMeta>, Metas);
+    DEF_VAL_ALL_REF_CONST(EdgeMeta, Meta);
 
  protected:
     QRectF boundingRect() const override;

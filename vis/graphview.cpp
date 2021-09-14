@@ -18,17 +18,17 @@ GraphView::GraphView(QWidget *parent) : QGraphicsView(parent) {
     this->setBackgroundBrush(QBrush(QPixmap(":/grid/grid100_w4_28o.png")));
 }
 
-NodePtr GraphView::addNode(QVector<NodeMeta> &metas) {
+NodePtr GraphView::addNode(NodeMeta &metas) {
     Node *node = new Node;
     node->setMetas(metas);
     mGraphScene->addNode(node);
     return reinterpret_cast<NodePtr>(node);
 }
-EdgePtr GraphView::addEdge(NodePtr src, NodePtr dst, QVector<EdgeMeta> &metas) {
+EdgePtr GraphView::addEdge(NodePtr src, NodePtr dst, EdgeMeta &meta) {
     Node *s = reinterpret_cast<Node *>(src);
     Node *d = reinterpret_cast<Node *>(dst);
     Edge *edge = new Edge(s, d);
-    edge->setMetas(metas);
+    edge->setMeta(meta);
     mGraphScene->addEdge(edge);
     return reinterpret_cast<EdgePtr>(edge);
 }
@@ -43,6 +43,8 @@ void GraphView::wheelEvent(QWheelEvent *event) {
         this->scale(0.9, 0.9);
     }
 }
+
+void GraphView::flush() { mGraphScene->flush(); }
 
 void GraphView::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::RightButton) {

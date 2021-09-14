@@ -13,7 +13,6 @@ GraphScene::GraphScene(QObject* parent) : QGraphicsScene(parent) {
 void GraphScene::addNode(Node* node) {
     mNodes.push_back(node);
     this->addItem(node);
-    DisplayNode(mType, mNodes);
 
     update();
 }
@@ -22,5 +21,10 @@ void GraphScene::addEdge(Edge* edge) {
     mEdges.push_back(edge);
     this->addItem(edge);
 
+    update();
+}
+
+void GraphScene::flush() {
+    DisplayNode(mType, mNodes);
     update();
 }

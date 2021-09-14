@@ -1,6 +1,7 @@
 #include "edge.h"
 #include "node.h"
 
+#include <QDebug>
 #include <QPainter>
 
 Edge::Edge(Node* nodeSrc, Node* nodeDst, QGraphicsItem* parent) : QGraphicsItem(parent) {
@@ -12,41 +13,38 @@ Edge::Edge(Node* nodeSrc, Node* nodeDst, QGraphicsItem* parent) : QGraphicsItem(
     mNodeSrc->addEdge(this);
     mNodeDst->addEdge(this);
 
+    this->setFlag(QGraphicsItem::ItemIsSelectable, true);
     this->setZValue(-1);
 }
 
 Edge::~Edge() {}
 
 QRectF Edge::boundingRect() const {
-    QPointF centerA(mNodeSrc->x(), mNodeSrc->y());
-    QPointF centerB(mNodeDst->x(), mNodeDst->y());
-    qreal srcX = mNodeSrc->x();
-    qreal srcY = mNodeSrc->y();
-    qreal dstX = mNodeDst->x();
-    qreal dstY = mNodeDst->y();
+    QLineF line(mNodeSrc->pos(), mNodeDst->pos());
 
     QPointF tl, br;
 
-    if (srcX > dstX) {
-        tl.setX(dstX - mPad);
-        br.setX(srcX + mPad);
+    if (line.x1() > line.x2()) {
+        tl.setX(line.x2());
+        br.setX(line.x1());
     } else {
-        tl.setX(srcX - mPad);
-        br.setX(dstX + mPad);
+        tl.setX(line.x1());
+        br.setX(line.x2());
     }
-    if (srcY > dstY) {
-        tl.setY(dstY - mPad);
-        br.setY(srcY + mPad);
+    if (line.y1() > line.y2()) {
+        tl.setY(line.y2());
+        br.setY(line.y1());
     } else {
-        tl.setY(srcY - mPad);
-        br.setY(dstY + mPad);
+        tl.setY(line.y1());
+        br.setY(line.y2());
     }
-
-    return QRectF(tl, br);
+    QRectF rect(0, 0, line.dx() + mMeta.linewidth, line.dy());
+    qDebug() << rect;
+    return rect;
 };
 
 void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
-    painter->setPen(QPen(mColor, 3));
+    painter->setPen(QPen(mColor, mMeta.linewidth));
 
     QLineF line(
         mNodeSrc->x() + mNodeSrc->boundingRect().width() / 2, mNodeSrc->y() + mNodeSrc->boundingRect().height() / 2,
@@ -54,7 +52,7 @@ void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
 
     painter->drawLine(line);
 
-    if (mMetas.size()) {
+    if (mMeta.data.size()) {
         QPointF textPoint;
         QRectF bound = boundingRect();
         textPoint.setX(bound.x() + bound.width() / 2 + 10);
@@ -62,6 +60,17 @@ void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
         QFont font = painter->font();
         font.setPixelSize(15);
         painter->setFont(font);
-        painter->drawText(textPoint, mMetas[0].data);
+        painter->drawText(textPoint, mMeta.data);
     }
+    // if (isSelected()) {
+    qDebug() << "select";
+    QPen pen;
+    pen.setStyle(Qt::PenStyle::DotLine);
+    pen.setWidth(1);
+    QBrush brush;
+    brush.setStyle(Qt::BrushStyle::NoBrush);
+    painter->setPen(pen);
+    painter->setBrush(brush);
+    painter->drawRect(boundingRect());
+    // }
 };

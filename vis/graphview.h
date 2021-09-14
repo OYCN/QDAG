@@ -9,13 +9,21 @@ typedef void* EdgePtr;
 class GraphScene;
 
 struct NodeMeta {
-    QString data;
-    QRect rect;
-    int flag;
+    enum class Type { Ellipse };
+    struct Data {
+        QString data = "";
+        QRect rect = QRect(0, 0, 4, 4);
+        int flag = Qt::AlignCenter;
+        int fontpix = 20;
+    };
+    int borderwidth = 3;
+    QVector<Data> datas;
+    Type type = Type::Ellipse;
 };
 
 struct EdgeMeta {
-    QString data;
+    QString data = "";
+    int linewidth = 3;
 };
 
 enum class DisplayType {
@@ -34,11 +42,12 @@ class GraphView : public QGraphicsView {
     GraphView(QWidget* parent = nullptr);
 
  public:
-    NodePtr addNode(QVector<NodeMeta>& metas);
-    EdgePtr addEdge(NodePtr src, NodePtr dst, QVector<EdgeMeta>& metas);
+    NodePtr addNode(NodeMeta& metas);
+    EdgePtr addEdge(NodePtr src, NodePtr dst, EdgeMeta& meta);
 
     void setType(DisplayType type);
     DisplayType getType();
+    void flush();
 
  protected:
     void wheelEvent(QWheelEvent* event) override;

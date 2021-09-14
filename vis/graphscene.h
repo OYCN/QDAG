@@ -18,6 +18,7 @@ class GraphScene : public QGraphicsScene {
  public:
     void addNode(Node* node);
     void addEdge(Edge* edge);
+    void flush();
 
  public:
     DEF_VAL_ALL(DisplayType, Type);

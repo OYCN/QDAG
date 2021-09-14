@@ -8,18 +8,19 @@ int main(int argc, char* argv[]) {
     QMainWindow w;
     GraphView* g = new GraphView;
     {
-        QVector<NodeMeta> nmetas(1);
-        NodeMeta& nmeta = nmetas[0];
-        nmeta.data = "a";
-        nmeta.flag = Qt::AlignCenter;
-        nmeta.rect = QRect(5, 5, 30, 30);
-        NodePtr nodeA = g->addNode(nmetas);
-        nmeta.data = "b";
-        NodePtr nodeB = g->addNode(nmetas);
-        QVector<EdgeMeta> emetas(1);
-        EdgeMeta& emeta = emetas[0];
+        NodeMeta nmeta;
+        nmeta.datas.resize(1);
+        nmeta.type = NodeMeta::Type::Ellipse;
+        nmeta.datas[0].data = "a";
+        nmeta.datas[0].flag = Qt::AlignCenter;
+        nmeta.datas[0].rect = QRect(5, 5, 30, 30);
+        NodePtr nodeA = g->addNode(nmeta);
+        nmeta.datas[0].data = "b";
+        NodePtr nodeB = g->addNode(nmeta);
+        EdgeMeta emeta;
         emeta.data = "111";
-        EdgePtr edgeAB = g->addEdge(nodeA, nodeB, emetas);
+        EdgePtr edgeAB = g->addEdge(nodeA, nodeB, emeta);
+        g->flush();
     }
     w.setCentralWidget(g);
     w.show();
