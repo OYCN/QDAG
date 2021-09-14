@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <QPainter>
+#include <math.h>
 
 Edge::Edge(Node* nodeSrc, Node* nodeDst, QGraphicsItem* parent) : QGraphicsItem(parent) {
     mNodeSrc = nodeSrc;
@@ -19,38 +20,33 @@ Edge::Edge(Node* nodeSrc, Node* nodeDst, QGraphicsItem* parent) : QGraphicsItem(
 
 Edge::~Edge() {}
 
+void Edge::updateRect() {
+    QPointF src = mNodeSrc->centerPos();
+    QPointF dst = mNodeDst->centerPos();
+    // qDebug() << src << dst;
+
+    mRectW = abs(src.x() - dst.x());
+    mRectH = abs(src.y() - dst.y());
+    mRectX = src.x() < dst.x() ? src.x() : dst.x();
+    mRectY = src.y() < dst.y() ? src.y() : dst.y();
+    int off = mMeta.linewidth / 2 + mMeta.linewidth % 2;
+    off += off * 1.5;
+    mRectX -= off;
+    mRectY -= off;
+    mRectW += off * 2;
+    mRectH += off * 2;
+    qDebug() << "x:" << mRectX << "y:" << mRectY << "w:" << mRectW << "h:" << mRectH << "off:" << off;
+}
+
 QRectF Edge::boundingRect() const {
-    QLineF line(mNodeSrc->pos(), mNodeDst->pos());
-
-    QPointF tl, br;
-
-    if (line.x1() > line.x2()) {
-        tl.setX(line.x2());
-        br.setX(line.x1());
-    } else {
-        tl.setX(line.x1());
-        br.setX(line.x2());
-    }
-    if (line.y1() > line.y2()) {
-        tl.setY(line.y2());
-        br.setY(line.y1());
-    } else {
-        tl.setY(line.y1());
-        br.setY(line.y2());
-    }
-    QRectF rect(0, 0, line.dx() + mMeta.linewidth, line.dy());
-    qDebug() << rect;
-    return rect;
+    
+    return QRectF(mRectX, mRectY, mRectW, mRectH);
 };
 
 void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
     painter->setPen(QPen(mColor, mMeta.linewidth));
 
-    QLineF line(
-        mNodeSrc->x() + mNodeSrc->boundingRect().width() / 2, mNodeSrc->y() + mNodeSrc->boundingRect().height() / 2,
-        mNodeDst->x() + mNodeDst->boundingRect().width() / 2, mNodeDst->y() + mNodeDst->boundingRect().height() / 2);
-
-    painter->drawLine(line);
+    painter->drawLine(QLineF(mNodeSrc->centerPos(), mNodeDst->centerPos()));
 
     if (mMeta.data.size()) {
         QPointF textPoint;
@@ -62,15 +58,14 @@ void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
         painter->setFont(font);
         painter->drawText(textPoint, mMeta.data);
     }
-    // if (isSelected()) {
-    qDebug() << "select";
-    QPen pen;
-    pen.setStyle(Qt::PenStyle::DotLine);
-    pen.setWidth(1);
-    QBrush brush;
-    brush.setStyle(Qt::BrushStyle::NoBrush);
-    painter->setPen(pen);
-    painter->setBrush(brush);
-    painter->drawRect(boundingRect());
-    // }
+    if (isSelected()) {
+        QPen pen;
+        pen.setStyle(Qt::PenStyle::DotLine);
+        pen.setWidth(1);
+        QBrush brush;
+        brush.setStyle(Qt::BrushStyle::NoBrush);
+        painter->setPen(pen);
+        painter->setBrush(brush);
+        painter->drawRect(boundingRect());
+    }
 };

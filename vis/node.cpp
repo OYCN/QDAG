@@ -3,9 +3,12 @@
 #include <QDebug>
 #include <QPainter>
 
+#include "edge.h"
+
 Node::Node(QGraphicsItem *parent) : QGraphicsItem(parent) {
     this->setFlag(QGraphicsItem::ItemIsMovable, false);
     this->setFlag(QGraphicsItem::ItemIsSelectable, true);
+    this->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
 
     mBackgroundColor = Qt::white;
     mBorderColor = Qt::black;
@@ -73,6 +76,10 @@ void Node::updateRect() {
     }
 }
 
+QPointF Node::centerPos() {
+    return pos() + QPointF(mRectX + mRectW / 2, mRectY + mRectH / 2);
+}
+
 QRectF Node::boundingRect() const { return QRectF(mRectX, mRectY, mRectW, mRectH); }
 
 void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
@@ -106,3 +113,18 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 }
 
 void Node::mouseMoveEvent(QGraphicsSceneMouseEvent *event) { QGraphicsItem::mouseMoveEvent(event); }
+
+QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    switch (change) {
+    case ItemPositionHasChanged:
+        foreach (Edge *edge, mEdges)
+            edge->updateRect();
+        break;
+    default:
+        break;
+    };
+    // qDebug() << change;
+
+    return QGraphicsItem::itemChange(change, value);
+}

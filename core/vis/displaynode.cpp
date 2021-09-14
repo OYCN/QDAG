@@ -34,11 +34,11 @@ void NoTypeHandle(QVector<Node*>& nodes) {
             QRectF t = top->boundingRect();
             start_y = t.y() + t.height() + 20;
         }
-        qDebug() << "start_x: " << start_x << " start_y: " << start_y;
+        // qDebug() << "start_x: " << start_x << " start_y: " << start_y;
         Node* m = nodes[i];
         QRectF c = m->boundingRect();
-        start_x += c.width() / 2;
-        start_y += c.height() / 2;
+        // start_x += c.width() / 2;
+        // start_y += c.height() / 2;
         m->setPos(start_x, start_y);
         qDebug() << "Node(" << idx_x << ", " << idx_y << ") x: " << start_x << ", y: " << start_y;
     }

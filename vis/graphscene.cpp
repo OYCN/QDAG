@@ -20,6 +20,7 @@ void GraphScene::addNode(Node* node) {
 void GraphScene::addEdge(Edge* edge) {
     mEdges.push_back(edge);
     this->addItem(edge);
+    edge->updateRect();
 
     update();
 }

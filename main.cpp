@@ -19,6 +19,7 @@ int main(int argc, char* argv[]) {
         NodePtr nodeB = g->addNode(nmeta);
         EdgeMeta emeta;
         emeta.data = "111";
+        emeta.linewidth = 3;
         EdgePtr edgeAB = g->addEdge(nodeA, nodeB, emeta);
         g->flush();
     }

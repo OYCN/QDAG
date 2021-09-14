@@ -14,14 +14,23 @@ class Edge : public QGraphicsItem {
     ~Edge();
 
  public:
+   void updateRect();
+
+ public:
     DEF_VAL_ALL(qreal, Pad);
     DEF_VAL_ALL(Node*, NodeSrc);
     DEF_VAL_ALL(Node*, NodeDst);
     DEF_VAL_ALL(QColor, Color);
     DEF_VAL_ALL_REF_CONST(EdgeMeta, Meta);
 
- protected:
+ public:
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+
+ private:
+    qreal mRectX;
+    qreal mRectY;
+    qreal mRectW;
+    qreal mRectH;
 };
 #endif  // EDGE_H
