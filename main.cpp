@@ -17,10 +17,16 @@ int main(int argc, char* argv[]) {
         NodePtr nodeA = g->addNode(nmeta);
         nmeta.datas[0].data = "b";
         NodePtr nodeB = g->addNode(nmeta);
+        nmeta.datas[0].data = "c";
+        NodePtr nodeC = g->addNode(nmeta);
         EdgeMeta emeta;
-        emeta.data = "111";
-        emeta.linewidth = 3;
+        emeta.data = "a->b";
+        emeta.linewidth = 2;
         EdgePtr edgeAB = g->addEdge(nodeA, nodeB, emeta);
+        emeta.data = "a->c";
+        EdgePtr edgeAC = g->addEdge(nodeA, nodeC, emeta);
+        emeta.data = "c->b";
+        EdgePtr edgeCB = g->addEdge(nodeC, nodeB, emeta);
         g->flush();
     }
     w.setCentralWidget(g);

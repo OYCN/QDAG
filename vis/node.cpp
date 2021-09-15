@@ -1,5 +1,6 @@
 #include "node.h"
 
+#include <math.h>
 #include <QDebug>
 #include <QPainter>
 
@@ -76,8 +77,37 @@ void Node::updateRect() {
     }
 }
 
-QPointF Node::centerPos() {
-    return pos() + QPointF(mRectX + mRectW / 2, mRectY + mRectH / 2);
+QPointF Node::centerPos() { return pos() + QPointF(mRectX + mRectW / 2, mRectY + mRectH / 2); }
+
+QPointF Node::crossPos(qreal angle, qreal add) {
+    /*
+                 -90'
+                  |
+                  |
+                  |
+                  |
+    180'-----------------------0'
+                  |
+                  |
+                  |
+                  |
+                  90'
+    */
+    qDebug() << "angle: " << angle / M_PI * 180;
+    QPointF pos = this->centerPos();
+    switch (mMetas.type) {
+        case NodeMeta::Type::Ellipse: {
+            qreal r = mRectW / 2 + abs(mRectX) / 2;
+            pos.setX(pos.x() + r * cos(angle));
+            pos.setY(pos.y() + r * sin(angle));
+            break;
+        }
+        default:
+            break;
+    }
+    pos.setX(pos.x() + add);
+    pos.setY(pos.y() + add);
+    return pos;
 }
 
 QRectF Node::boundingRect() const { return QRectF(mRectX, mRectY, mRectW, mRectH); }
@@ -114,15 +144,14 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 void Node::mouseMoveEvent(QGraphicsSceneMouseEvent *event) { QGraphicsItem::mouseMoveEvent(event); }
 
-QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value)
-{
+QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value) {
     switch (change) {
-    case ItemPositionHasChanged:
-        foreach (Edge *edge, mEdges)
-            edge->updateRect();
-        break;
-    default:
-        break;
+        case ItemPositionHasChanged:
+            foreach (Edge *edge, mEdges)
+                edge->updateRect();
+            break;
+        default:
+            break;
     };
     // qDebug() << change;
 

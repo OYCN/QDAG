@@ -1,6 +1,7 @@
 #ifndef GRAPHVIEW_H
 #define GRAPHVIEW_H
 
+#include <math.h>
 #include <QGraphicsView>
 
 typedef void* NodePtr;
@@ -24,6 +25,9 @@ struct NodeMeta {
 struct EdgeMeta {
     QString data = "";
     int linewidth = 3;
+    qreal arrowLen = 5;
+    qreal arrowwidth = 2;
+    qreal arrowAngle = M_PI / 4;
 };
 
 enum class DisplayType {

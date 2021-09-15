@@ -20,6 +20,7 @@ class Node : public QGraphicsItem {
     NodeMeta getMetas();
     void updateRect();
     QPointF centerPos();
+    QPointF crossPos(qreal angle, qreal add = 0);
 
  public:
     DEF_VAL_ALL(QColor, BorderColor);
@@ -31,7 +32,7 @@ class Node : public QGraphicsItem {
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+    QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 
  private:
     QVector<Edge*> mEdges;

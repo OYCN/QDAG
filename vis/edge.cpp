@@ -1,9 +1,9 @@
 #include "edge.h"
 #include "node.h"
 
+#include <math.h>
 #include <QDebug>
 #include <QPainter>
-#include <math.h>
 
 Edge::Edge(Node* nodeSrc, Node* nodeDst, QGraphicsItem* parent) : QGraphicsItem(parent) {
     mNodeSrc = nodeSrc;
@@ -38,15 +38,32 @@ void Edge::updateRect() {
     qDebug() << "x:" << mRectX << "y:" << mRectY << "w:" << mRectW << "h:" << mRectH << "off:" << off;
 }
 
-QRectF Edge::boundingRect() const {
-    
-    return QRectF(mRectX, mRectY, mRectW, mRectH);
-};
+QRectF Edge::boundingRect() const { return QRectF(mRectX, mRectY, mRectW, mRectH); };
 
 void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
     painter->setPen(QPen(mColor, mMeta.linewidth));
 
-    painter->drawLine(QLineF(mNodeSrc->centerPos(), mNodeDst->centerPos()));
+    QLineF line(mNodeSrc->centerPos(), mNodeDst->centerPos());
+
+    qreal angle = std::atan2(line.dy(), line.dx());
+
+    QPointF src = mNodeSrc->crossPos(angle);
+    QPointF dst = mNodeDst->crossPos(angle + M_PI);
+
+    painter->drawLine(QLineF(src, dst));
+
+    QPointF arrowA;
+    QPointF arrowB;
+    arrowA.setX(dst.x() + cos(angle + M_PI - mMeta.arrowAngle) * mMeta.arrowLen);
+    arrowA.setY(dst.y() + sin(angle + M_PI - mMeta.arrowAngle) * mMeta.arrowLen);
+    arrowB.setX(dst.x() + cos(angle + M_PI + mMeta.arrowAngle) * mMeta.arrowLen);
+    arrowB.setY(dst.y() + sin(angle + M_PI + mMeta.arrowAngle) * mMeta.arrowLen);
+    qDebug() << (angle + M_PI - mMeta.arrowAngle) * 180 / M_PI << cos(angle + M_PI - mMeta.arrowAngle);
+    painter->setPen(QPen(mColor, mMeta.arrowwidth));
+    // painter->setBrush(QBrush(Qt::black));
+    // painter->drawPolygon(QPolygonF() << dst << arrowA << arrowB);
+    painter->drawLine(QLineF(dst, arrowA));
+    painter->drawLine(QLineF(dst, arrowB));
 
     if (mMeta.data.size()) {
         QPointF textPoint;
